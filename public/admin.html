@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DreamHome Admin Panel</title>
+  <link rel="stylesheet" href="/css/admin.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🏠</span>
+      <div>
+        <strong>DreamHome</strong>
+        <small>Admin Panel</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="nav-item active" onclick="showSection('dashboard',this)">
+        <span>📊</span> Dashboard
+      </a>
+      <a href="#properties" class="nav-item" onclick="showSection('properties',this)">
+        <span>🏘</span> Properties
+      </a>
+      <a href="#add" class="nav-item" onclick="showSection('add',this)">
+        <span>➕</span> Add Property
+      </a>
+      <a href="/" class="nav-item" target="_blank">
+        <span>💬</span> View Chatbot
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span>DreamHome v1.0</span>
+    </div>
+  </aside>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+  <main class="main-content">
+
+    <!-- ── Dashboard ─────────────────────────── -->
+    <section id="sec-dashboard" class="section active">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <span class="badge-live">🟢 Live</span>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon">🏘</div>
+          <div>
+            <div class="stat-num" id="statTotal">—</div>
+            <div class="stat-label">Total Properties</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div>
+            <div class="stat-num" id="statAvail">—</div>
+            <div class="stat-label">Available Now</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏠</div>
+          <div>
+            <div class="stat-num" id="statSale">—</div>
+            <div class="stat-label">For Sale</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔑</div>
+          <div>
+            <div class="stat-num" id="statRent">—</div>
+            <div class="stat-label">For Rent</div>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">Recent Listings</h2>
+      <div class="prop-grid" id="dashPropGrid">
+        <p class="loading">Loading...</p>
+      </div>
+    </section>
+
+    <!-- ── All Properties ────────────────────── -->
+    <section id="sec-properties" class="section">
+      <div class="page-header">
+        <h1>All Properties</h1>
+        <button class="btn-primary" onclick="showSection('add', document.querySelector('[href=\'#add\']'))">
+          ➕ Add New
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-row">
+        <input type="text"   id="filterSearch" placeholder="🔍 Search by name, area..." oninput="filterTable()" />
+        <select id="filterType" onchange="filterTable()">
+          <option value="">All Types</option>
+          <option value="sale">For Sale</option>
+          <option value="rent">For Rent</option>
+        </select>
+        <select id="filterBHK" onchange="filterTable()">
+          <option value="">All BHK</option>
+          <option value="0">Studio</option>
+          <option value="1">1 BHK</option>
+          <option value="2">2 BHK</option>
+          <option value="3">3 BHK</option>
+          <option value="4">4 BHK</option>
+        </select>
+        <select id="filterAvail" onchange="filterTable()">
+          <option value="">All Status</option>
+          <option value="true">Available</option>
+          <option value="false">Not Available</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="prop-table" id="propTable">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>BHK</th>
+              <th>Location</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="propTableBody">
+            <tr><td colspan="8" class="loading">Loading properties...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Add / Edit Property Form ──────────── -->
+    <section id="sec-add" class="section">
+      <div class="page-header">
+        <h1 id="formTitle">Add New Property</h1>
+      </div>
+
+      <form class="prop-form" id="propForm" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="editId" />
+
+        <div class="form-grid">
+
+          <!-- Basic Info -->
+          <div class="form-group span-2">
+            <label>Property Title *</label>
+            <input type="text" id="f_title" placeholder="e.g. Spacious 2BHK in Andheri West" required />
+          </div>
+
+          <div class="form-group">
+            <label>Property Type *</label>
+            <select id="f_type" required onchange="togglePriceFields()">
+              <option value="sale">For Sale</option>
+              <option value="rent">For Rent</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>BHK Type *</label>
+            <select id="f_bhk" required>
+              <option value="0">Studio</option>
+              <option value="1">1 BHK</option>
+              <option value="2" selected>2 BHK</option>
+              <option value="3">3 BHK</option>
+              <option value="4">4 BHK</option>
+              <option value="5">5 BHK+</option>
+            </select>
+          </div>
+
+          <!-- Price fields -->
+          <div class="form-group" id="saleFields">
+            <label>Sale Price (₹) *</label>
+            <input type="number" id="f_price" placeholder="e.g. 9500000" />
+          </div>
+          <div class="form-group" id="saleDspFields">
+            <label>Price Display Text</label>
+            <input type="text" id="f_priceDisplay" placeholder="e.g. ₹95 Lakhs" />
+          </div>
+
+          <div class="form-group" id="rentFields" style="display:none">
+            <label>Monthly Rent (₹) *</label>
+            <input type="number" id="f_rent" placeholder="e.g. 25000" />
+          </div>
+          <div class="form-group" id="rentDspFields" style="display:none">
+            <label>Rent Display Text</label>
+            <input type="text" id="f_rentDisplay" placeholder="e.g. ₹25,000/month" />
+          </div>
+
+          <!-- Location -->
+          <div class="form-group">
+            <label>City *</label>
+            <input type="text" id="f_city" placeholder="e.g. Mumbai" required />
+          </div>
+          <div class="form-group">
+            <label>Area / Locality *</label>
+            <input type="text" id="f_area" placeholder="e.g. Andheri West" required />
+          </div>
+          <div class="form-group span-2">
+            <label>Full Address</label>
+            <input type="text" id="f_address" placeholder="e.g. Near Lokhandwala Market, Andheri West" />
+          </div>
+
+          <!-- Property Details -->
+          <div class="form-group">
+            <label>Area (sq ft) *</label>
+            <input type="number" id="f_area_sqft" placeholder="e.g. 1050" required />
+          </div>
+          <div class="form-group">
+            <label>Floor</label>
+            <input type="text" id="f_floor" placeholder="e.g. 8th Floor" />
+          </div>
+          <div class="form-group">
+            <label>Total Floors</label>
+            <input type="number" id="f_totalFloors" placeholder="e.g. 24" />
+          </div>
+          <div class="form-group">
+            <label>Property Age</label>
+            <input type="text" id="f_age" placeholder="e.g. New Construction / 5 Years Old" />
+          </div>
+          <div class="form-group">
+            <label>Facing</label>
+            <input type="text" id="f_facing" placeholder="e.g. East / Sea Facing" />
+          </div>
+          <div class="form-group">
+            <label>Possession</label>
+            <input type="text" id="f_possession" placeholder="e.g. Ready to Move" />
+          </div>
+
+          <!-- Image & Badge -->
+          <div class="form-group span-2">
+            <label>Image URL</label>
+            <input type="url" id="f_image" placeholder="https://images.unsplash.com/..." />
+          </div>
+          <div class="form-group">
+            <label>Badge (optional)</label>
+            <input type="text" id="f_badge" placeholder="e.g. 🔥 Hot Deal" />
+          </div>
+          <div class="form-group">
+            <label>Availability</label>
+            <select id="f_available">
+              <option value="true">Available</option>
+              <option value="false">Not Available</option>
+            </select>
+          </div>
+
+          <!-- Amenities & Landmarks -->
+          <div class="form-group span-2">
+            <label>Amenities (comma separated)</label>
+            <input type="text" id="f_amenities" placeholder="Gym, Swimming Pool, Parking, 24x7 Security" />
+          </div>
+          <div class="form-group span-2">
+            <label>Nearby Landmarks (comma separated)</label>
+            <input type="text" id="f_landmarks" placeholder="500m from Station, Near Mall, Close to Highway" />
+          </div>
+
+          <!-- Description -->
+          <div class="form-group span-2">
+            <label>Description</label>
+            <textarea id="f_description" rows="3" placeholder="Write a short, compelling description of the property..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="resetForm()">✕ Cancel</button>
+          <button type="submit" class="btn-primary" id="submitBtn">➕ Add Property</button>
+        </div>
+      </form>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── Confirm Delete Modal ──────────────────── -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="confirm-modal">
+    <h3>🗑 Delete Property</h3>
+    <p>Are you sure? This action cannot be undone.</p>
+    <div class="confirm-actions">
+      <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-danger"    id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ──────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script src="/js/admin.js"></script>
+</body>
+</html>

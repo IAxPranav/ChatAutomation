@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamHome Properties – Chat with Priya</title>
+  <link rel="stylesheet" href="/css/chat.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="chat-wrapper">
+
+  <!-- Header -->
+  <header class="chat-header">
+    <div class="agent-info">
+      <div class="avatar-wrap">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=ffdfbf&hair=long&accessories=none" 
+             alt="Priya" class="avatar" />
+        <span class="online-dot"></span>
+      </div>
+      <div>
+        <h2>Priya Sharma <span class="verified-badge">✓ VERIFIED</span></h2>
+        <span class="status">🟢 Online &nbsp;·&nbsp; Senior Property Consultant</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon btn-icon-text" onclick="clearChat()" title="New Chat">New Chat</button>
+      <a href="/admin" class="btn-icon" title="Admin Panel">⚙️</a>
+    </div>
+  </header>
+
+  <!-- Messages -->
+  <main class="chat-messages" id="chatMessages"></main>
+
+  <!-- Input -->
+  <footer class="chat-input-area">
+    <div class="input-wrap">
+      <textarea
+        id="userInput"
+        placeholder="Message Priya..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </footer>
+</div>
+
+<!-- Property Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+  <div class="modal" id="propModal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/js/chat.js"></script>
+</body>
+</html>
